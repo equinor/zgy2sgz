@@ -9,7 +9,7 @@ function pre_build {
     yum_install uuid
 
     # Need to tell auditwheel where to find libzfp
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/zfp/build/lib64/:$(pwd)/open-zgy/zgy/Slb.Salmon.ZgyPublic/Lin64_gcc485
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/zfp/build/lib64/:$(pwd)/open-zgy/zgy/Slb.Salmon.ZgyPublic/Lin64_gcc485:$(pwd)/zgy2sgz/build/convert
     $PYTHON_EXE -m pip install "cmake<3.14"
 
     ZFP_BUILD_DIR="zfp/build"
