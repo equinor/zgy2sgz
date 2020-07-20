@@ -1,0 +1,82 @@
+env:
+    global:
+        - REPO_DIR=zgy2sgz
+        # pip dependencies to _build_ your project
+        - BUILD_DEPENDS="cython numpy"
+        # pip dependencies to _test_ your project.  Include any dependencies
+        # that you need, that are also specified in BUILD_DEPENDS, this will be
+        # a separate install.
+        - TEST_DEPENDS="numpy pytest"
+        - UNICODE_WIDTH=32
+
+
+# You will likely prefer "language: generic" for travis configuration,
+# rather than, say "language: python". Multibuild doesn't use
+# Travis-provided Python but rather installs and uses its own, where the
+# Python version is set from the MB_PYTHON_VERSION variable. You can still
+# specify a language here if you need it for some unrelated logic and you
+# can't use Multibuild-provided Python or other software present on a
+# builder.
+language: generic
+
+# For CPython macOS builds only, the minimum supported macOS version and
+# architectures of any C extensions in the wheel are set with the variable
+# MB_PYTHON_OSX_VER: 10.9 (64-bit only) or 10.6 (64/32-bit dual arch). By
+# default this is set to the highest available for the Python version selected
+# using MB_PYTHON_VERSION. You should only need to set this explicitly if you
+# are building a 10.6 dual-arch build for a CPython version where both a 10.9 and
+# 10.6 build are available (for example, 2.7 or 3.7).
+# All PyPy macOS builds are 64-bit only.
+
+# Required in Linux to invoke `docker` ourselves
+services: docker
+
+# Host distribution.  This is the distribution from which we run the build
+# and test containers, via docker.
+dist: xenial
+
+matrix:
+  include:
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.5
+        - MB_ML_VER=2014
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.6
+        - MB_ML_VER=2014
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.7
+        - MB_ML_VER=2014
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.8
+        - MB_ML_VER=2014
+
+before_install:
+    - git clone https://github.com/matthew-brett/multibuild.git
+    - source multibuild/common_utils.sh
+    - source multibuild/travis_steps.sh
+    - before_install
+
+install:
+    - build_wheel $REPO_DIR $PLAT
+
+script:
+    - install_run $PLAT
+
+before_deploy:
+    - echo DEPLOYING
+    - ls
+    - mv wheelhouse zfp/dist
+    - cd zfp
+    - ls dist
+
+deploy:
+  provider: pypi
+  repository: testpypi
+  username: "__token__"
+  password:
+    secure: "GDWTJvvvlRphnlG4Zg06wWFK+MWzm1KXI6fOwQ83uMxS3fYPHEGoXSap7KY5dB6EzhyNN/dIPGMnBQO73IYECJ7IuEngHCPR7SHouzCC1D+o/2x5NirkvE7t98f9NOjNNmj+UWcOD/z1gEseFP1UaIojNQIqjPENHuZPR0Dr9yAKrsKGkY4J2gImGtEJZ0zhk3nsz4oN15f+WemexQ2Q09405sBmik/SoDHtNv+TPhY2yPTA1jcWvUyom/jHZ+tRqW9l1u/LGdnK8+MUFqmcS1R1SRkwcbjYuOiST+2xwY2mrWnXjDLbjN9k5ZkiXio0QFdFMWMRpK3BsAm8/E/wmBqYbv0u7F0UszkVpGdXjxhB1z/PYhlpFXU8RV9F2E7VtPW/eot752UQepCAYj6J+NS5eUC7s2lR5m1/eNTjeoeSO/0X0LpRfQqlXI32CEk/vTVvVhTJ3vb6OnJlkQK7iWiA8gVc13q8m0gqQRY7Ue4dQ2k7hNUgS1FI241dtH/4rPZZKqLz7IB/hNCRWGamH9oZOlOTdaD7vLULVuTHm20fYV40fJg+vBjiIPK5pvGL2DGo7jwfMXkQLm0fhEFvgpda5vGjvoeh7WfpR2nA8qsh1Ywk7jF+mZaa1PvQKGRFH3ieGx2gfHjh31MaHhFZNKh72eroFeKEUXc2EqtLHYI="
+  skip_cleanup: true
