@@ -1,0 +1,73 @@
+os: Visual Studio 2015
+image: Visual Studio 2015
+
+platform:
+  - x64
+  - x86
+
+environment:
+  global:
+    REPO_DIR: zgy2sgz
+    ZFP_DIR: zfp
+    PACKAGE_NAME: zgy2sgz
+    BUILD_DEPENDS: "cython numpy"
+    TWINE_USERNAME: "__token__"
+    TWINE_PASSWORD:
+        secure: "1w5OdXdfDiJTUTIwLkUzYujyfMBEc8qJMh1HaWSOyna5279idy/SNFYW+unYAL/w/dZh8JWPY0knexrmpFlBPVgfzXNszrCfZKnDIiimE1tVjP05Hc7OxqoS/yRfZGFsKe8T2tMc9WKLAOltUbb/vPrY2ohGDmavL1h23JElrHnLXlstXXdo/EwptpVca+l8a9UAX8L6g2pcNQU3h4BPWWonEPhHbGoHIBJVyzA4QRsWiPl8rXN2NQCZ30z9JVvXOv7+mROw1o7MHCgPhUq8nb+ui4f5QR2t26PHKZXPUEN/0HHGeh8lmT2bmTrMCDQvh2nG1bsHTft4fnej6tgZG5Dh3V/Qfz6VSPZHlTQjI753c6+IAUOvjEBXtVZaNJOKSCpzAPtufdxRxOe95qPEPHrM8B+KWi3E5KVouubq8c8knOVBYBRX8Q0+JgIZxK2aqkzcIJ8PmPPNL5wZgRIS/axEroqDpqXKhy+qiD04Fhc4bKh9jtLb59xmswl+fHt8benQcId7pgAoO+FldBkMt080XM79EXgYwhCV6+dk2DSoQNoYtHgR2irrbvo40IDgJ16KN4vvZiaJcI6oiZNh05xhnMCVNHf5xiI6tR7sfPVII99S0fwss4W2Ks2qsf9de2+zsZo8a8ugPEB+TYrUDWyjXMgKNp0Za8Xb97lUja4="
+
+  matrix:
+    - PYTHON: C:\Python35
+      PYTHON_VERSION: 35
+
+    - PYTHON: C:\Python36
+      PYTHON_VERSION: 36
+
+    - PYTHON: C:\Python37
+      PYTHON_VERSION: 37
+
+    - PYTHON: C:\Python38
+      PYTHON_VERSION: 38
+
+install:
+    - IF "%platform%" == "x64" SET PYTHON=%PYTHON%-x64
+    - git submodule init
+    - git submodule update
+
+    # Check that we have the expected version and architecture for Python
+    - SET PATH=%PYTHON%;%PYTHON%\Lib;%PYTHON%\Libs;%PYTHON%\Scripts;%PYTHON%\Library\bin;%PATH%
+    - python --version
+    - python -m pip install pip
+    - python -m pip install --upgrade pip
+    - python -m pip install twine setuptools wheel cython numpy scikit-build
+    - IF %PYTHON_VERSION% == "35" python -m pip install "cmake<3.14"
+    - IF %PYTHON_VERSION% == "36" python -m pip install "cmake<3.14"
+    - IF %PYTHON_VERSION% == "37" python -m pip install "cmake<3.14"
+    - IF %PYTHON_VERSION% == "38" python -m pip install cmake
+
+    - echo %PATH%
+    - echo %PYTHON%
+
+before_build:
+    - set generator="Visual Studio 14 2015"
+    - IF "%platform%" == "x64" set generator="Visual Studio 14 2015 Win64"
+
+build_script:
+
+    - cd %ZFP_DIR%
+    - mkdir build
+    - cd build
+    - cmake .. -G %generator% -DBUILD_TESTING=OFF
+    - cmake --build . --config Release
+
+    - cd ../../%REPO_DIR%
+    - mkdir build
+    - cd build
+
+    - cmake .. -G %generator%
+    - cmake --build .
+    - cd ..
+
+    - python setup.py bdist_wheel
+
+deploy_script:
+  - python -m twine upload --repository-url https://upload.pypi.org/legacy/ --skip-existing dist/*
