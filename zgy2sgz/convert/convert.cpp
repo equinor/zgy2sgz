@@ -93,8 +93,8 @@ void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3]
 void writeFooter(std::ofstream& outfile_handle, MyMetaData meta)
 {
     int trace_count = meta.size[0]*meta.size[1];
-    int il_headers [trace_count];
-    int xl_headers [trace_count];
+    int* il_headers = new int[trace_count];
+    int* xl_headers = new int[trace_count];
 
     for (int il=0; il<meta.size[0]; il++){
         for (int xl=0; xl<meta.size[1]; xl++){
@@ -104,4 +104,7 @@ void writeFooter(std::ofstream& outfile_handle, MyMetaData meta)
     }
     outfile_handle.write((char*)il_headers, trace_count*sizeof(int));
     outfile_handle.write((char*)xl_headers, trace_count*sizeof(int));
+
+    delete[] il_headers;
+    delete[] xl_headers;
 }
