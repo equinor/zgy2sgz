@@ -1,5 +1,5 @@
 add_library(zgy2sgz SHARED convert.cpp meta.cpp)
-add_library(ZGY_LIB STATIC IMPORTED)
+
 find_library(ZFP_LIB zfp REQUIRED
                          PATHS "../../zfp/build/lib64"
                                "../../zfp/build/lib/Release"

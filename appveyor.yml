@@ -64,7 +64,7 @@ build_script:
     - cd build
 
     - cmake .. -G %generator%
-    - cmake --build .
+    - cmake --build . --config Release
     - cd ..
 
     - python setup.py bdist_wheel

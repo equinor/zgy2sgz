@@ -7,7 +7,7 @@
 
 
 // Yes, bits_per_voxel can be fractional, but we're statically typed so we'll find out when this is a problem
-void convertFile(const char *infile, const char *outfile, int bits_per_voxel)
+MODULE_API void convertFile(const char *infile, const char *outfile, int bits_per_voxel)
 {
     const std::string infilename(infile);
     const std::string outfilename(outfile);

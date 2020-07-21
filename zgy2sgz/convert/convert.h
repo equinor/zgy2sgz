@@ -13,6 +13,12 @@ using namespace Slb::Salmon::Zgy;
         return; \
     }
 
-void convertFile(const char *infile, const char *outfile, int bits_per_voxel);
+#ifdef _WIN32
+#  define MODULE_API __declspec(dllexport)
+#else
+#  define MODULE_API
+#endif
+
+MODULE_API void convertFile(const char *infile, const char *outfile, int bits_per_voxel);
 void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3], int pad_dim, int bits_per_voxel);
 void writeFooter(std::ofstream& outfile_handle, MyMetaData meta);
