@@ -13,7 +13,7 @@ environment:
     BUILD_DEPENDS: "cython numpy"
     TWINE_USERNAME: "__token__"
     TWINE_PASSWORD:
-        secure: "1w5OdXdfDiJTUTIwLkUzYujyfMBEc8qJMh1HaWSOyna5279idy/SNFYW+unYAL/w/dZh8JWPY0knexrmpFlBPVgfzXNszrCfZKnDIiimE1tVjP05Hc7OxqoS/yRfZGFsKe8T2tMc9WKLAOltUbb/vPrY2ohGDmavL1h23JElrHnLXlstXXdo/EwptpVca+l8a9UAX8L6g2pcNQU3h4BPWWonEPhHbGoHIBJVyzA4QRsWiPl8rXN2NQCZ30z9JVvXOv7+mROw1o7MHCgPhUq8nb+ui4f5QR2t26PHKZXPUEN/0HHGeh8lmT2bmTrMCDQvh2nG1bsHTft4fnej6tgZG5Dh3V/Qfz6VSPZHlTQjI753c6+IAUOvjEBXtVZaNJOKSCpzAPtufdxRxOe95qPEPHrM8B+KWi3E5KVouubq8c8knOVBYBRX8Q0+JgIZxK2aqkzcIJ8PmPPNL5wZgRIS/axEroqDpqXKhy+qiD04Fhc4bKh9jtLb59xmswl+fHt8benQcId7pgAoO+FldBkMt080XM79EXgYwhCV6+dk2DSoQNoYtHgR2irrbvo40IDgJ16KN4vvZiaJcI6oiZNh05xhnMCVNHf5xiI6tR7sfPVII99S0fwss4W2Ks2qsf9de2+zsZo8a8ugPEB+TYrUDWyjXMgKNp0Za8Xb97lUja4="
+        secure: yNYS7xZ1Cx+oINGqVDiiZhVtDGJR7eK1irisAGXUjEzw0zzcRQ7X+5Z2QMNjOe7viPmMAkhyd82FeeiYbvQkDSgW0AJY3RF9CKwUJAwsX7OEgcl6Z4gmwGNp93HwucdX3vDHD+qawXmWdzPjfZbAZxr5E0OTQuVD1v+CpET7JluUh2pFEf8wZvA623JnnK9SXyQvz986nM8mT7JV/yFDaeCsPQTAqUFYD4mCYROTybA=
 
   matrix:
     - PYTHON: C:\Python35
@@ -70,4 +70,4 @@ build_script:
     - python setup.py bdist_wheel
 
 deploy_script:
-  - python -m twine upload --repository-url https://upload.pypi.org/legacy/ --skip-existing dist/*
+  - python -m twine upload --skip-existing dist/*
