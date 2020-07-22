@@ -1,4 +1,7 @@
 *.o
+dist/
+build/
+zgy2sgz.egg-info/
 zgy2sgz/build/
 zgy2sgz/dist/
 zgy2sgz/libzgy2sgz.so

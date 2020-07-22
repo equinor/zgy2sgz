@@ -37,7 +37,8 @@ install:
     - python --version
     - python -m pip install pip
     - python -m pip install --upgrade pip
-    - python -m pip install twine setuptools wheel cython numpy scikit-build
+    - python -m pip install twine wheel cython numpy scikit-build
+    - python -m pip install --upgrade setuptools
     - IF %PYTHON_VERSION% == "35" python -m pip install "cmake<3.14"
     - IF %PYTHON_VERSION% == "36" python -m pip install "cmake<3.14"
     - IF %PYTHON_VERSION% == "37" python -m pip install "cmake<3.14"
@@ -64,7 +65,11 @@ build_script:
 
     - cmake .. -G %generator%
     - cmake --build . --config Release
-    - cd ..
+    - cd ../..
+    
+    - cp zgy2sgz/build/convert/Release/zgy2sgz.dll .
+    - cp zfp/build/bin/Release/zfp.dll .
+    - cp zgy2sgz/open-zgy/zgy/Slb.Salmon.ZgyPublic/x64_vs140/Salmon/Main/Release/Slb.Salmon.Zgy.dll .
 
     - python setup.py bdist_wheel
 
