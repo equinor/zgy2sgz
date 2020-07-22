@@ -1,6 +1,6 @@
 env:
     global:
-        - REPO_DIR=zgy2sgz
+        - REPO_DIR=.
         # pip dependencies to _build_ your project
         - BUILD_DEPENDS="cython numpy"
         # pip dependencies to _test_ your project.  Include any dependencies
