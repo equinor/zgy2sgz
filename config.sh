@@ -9,6 +9,9 @@ function pre_build {
 
     yum_install uuid
 
+    # Need to tell auditwheel where to find Slb.Salmon.Zgy
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/zgy2sgz/open-zgy/zgy/Slb.Salmon.ZgyPublic/Lin64_gcc485
+
     ZFP_BUILD_DIR="zfp/build"
     BUILD_DIR="zgy2sgz/build"
 
@@ -21,14 +24,14 @@ function pre_build {
     mkdir $ZFP_BUILD_DIR
     pushd $ZFP_BUILD_DIR
     cmake ..
-    cmake --build .
+    cmake --build . --target install
     popd
 
 
     mkdir $BUILD_DIR
     pushd $BUILD_DIR
     cmake ..
-    cmake --build .
+    cmake --build . --target install
     popd
 }
 
