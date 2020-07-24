@@ -8,7 +8,7 @@ def get_long_description():
     with open('README.md') as f:
         return f.read()
 
-version="0.0.3"
+version="0.0.4"
 
 if platform == "win32":
     # This is for Windows

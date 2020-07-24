@@ -73,6 +73,8 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
     free(data);
 
     writeFooter(outfile_handle, meta);
+    outfile_handle.flush();
+    outfile_handle.close();
 }
 
 void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3], int pad_dim, int bits_per_voxel)
