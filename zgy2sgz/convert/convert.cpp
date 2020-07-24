@@ -79,7 +79,7 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
 
 void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3], int pad_dim, int bits_per_voxel)
 {
-    void* header = malloc(4096);
+    void* header = calloc(4096, 1);
     ((unsigned*)header)[0] = 1;
     ((unsigned*)header)[1] = meta.size[2];
     ((unsigned*)header)[2] = meta.size[1];
