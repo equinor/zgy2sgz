@@ -70,10 +70,10 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
         }
         std::memset(buf.get(), 0, bufsize_pad*sizeof(float));
     }
+    outfile_handle.flush();
     free(data);
 
     writeFooter(outfile_handle, meta);
-    outfile_handle.flush();
     outfile_handle.close();
 }
 
@@ -104,6 +104,7 @@ void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3]
     ((unsigned*)header)[469] = 193;
 
     outfile_handle.write((char*)header, 4096);
+    outfile_handle.flush();
     free(header);
 }
 
@@ -121,6 +122,7 @@ void writeFooter(std::ofstream& outfile_handle, MyMetaData meta)
     }
     outfile_handle.write((char*)il_headers, trace_count*sizeof(int));
     outfile_handle.write((char*)xl_headers, trace_count*sizeof(int));
+    outfile_handle.flush();
 
     delete[] il_headers;
     delete[] xl_headers;
