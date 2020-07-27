@@ -1,8 +1,15 @@
 # zgy2sgz
 
-Small utility package which has only one job: Provide a Python function which uses Schlumberger's ZGY library and LLNL's ZFP library to read ZGY files and write seismic-zfp files.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Travis](https://img.shields.io/travis/equinor/zgy2sgz/master.svg?label=travis)](https://travis-ci.org/equinor/zgy2sgz)
+[![PyPi Version](https://img.shields.io/pypi/v/zgy2sgz.svg)](https://pypi.org/project/zgy2sgz/)
 
-###Example
+
+Tiny utility package which has only one job: Provide a Python function which uses Schlumberger's ZGY library and LLNL's ZFP library to read ZGY files and write [seismic-zfp (.SGZ) format](https://github.com/equinor/seismic-zfp/blob/master/docs/file-specification.md) files.
+
+zgy2sgz is intended exclusively for use by the [seismic-zfp package](https://github.com/equinor/seismic-zfp)
+
+## Example
 
 ```python
 from zgy2sgz import convertFile

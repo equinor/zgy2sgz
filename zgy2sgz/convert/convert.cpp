@@ -60,6 +60,7 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
     zfp_field* field = zfp_field_3d(buf.get(), zfp_type_float, size_pad[2], size_pad[1], il_group_size);
 
     for (int i=0; i<(size_pad[0] +il_group_size -1)/il_group_size; i++) {
+        std::memset(buf.get(), 0, bufsize_pad*sizeof(float));
         ZGYAPI_ASSERT(accessor->read(i*il_group_size, 0, 0, il_group_size, size_pad[1], size_pad[2], buf.get(), &error));
         zfp_stream_rewind(stream);
         zfp_compress(stream, field);
@@ -68,7 +69,6 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
         } else {
             outfile_handle.write((char*)data, compressed_size);
         }
-        std::memset(buf.get(), 0, bufsize_pad*sizeof(float));
     }
     outfile_handle.flush();
     free(data);
