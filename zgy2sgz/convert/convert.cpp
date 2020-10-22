@@ -18,6 +18,7 @@
 #include <fstream>
 #include <cstring>
 #include <stdio.h>
+#include <limits.h>
 #include "zfp.h"
 
 
@@ -36,11 +37,19 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
     ZGYAPI_ASSERT(accessor->getMetaData(&meta, &error));
 
     int size_pad[3];
-    const int il_group_size = 64;
+    int il_group_size = 64;
     const int pad_dim = 2048 / bits_per_voxel;
     size_pad[0] = 4 * ((meta.size[0] + 3) / 4);
     size_pad[1] = 4 * ((meta.size[1] + 3) / 4);
     size_pad[2] = pad_dim * ((meta.size[2] + pad_dim - 1) / pad_dim);
+
+    // Very large files may have inlines which are too long for Schlumberger's implementation of ZgyReader
+    // to read a full 64x64x64 brick-depth of. The limit appears to be 4GB, so suspect they use int where they
+    // should be using size_t. Reduce il_group_size correspondingly and hope that the disk buffers save you.
+    while (il_group_size*size_pad[1]*size_pad[2]*sizeof(float) > UINT_MAX) {
+        il_group_size /= 2;
+
+    }
 
     std::ofstream outfile_handle (outfilename.c_str(), std::ofstream::binary);
 
@@ -55,7 +64,7 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
     zfp_stream_set_rate(stream, bits_per_voxel, zfp_type_float, 3, 0);
     zfp_stream_set_execution(stream, zfp_exec_omp);
 
-    const int bufsize_pad(il_group_size*size_pad[1]*size_pad[2]);
+    const size_t bufsize_pad(il_group_size*size_pad[1]*size_pad[2]);
     Buffer<float> buf(bufsize_pad);
     zfp_field* field = zfp_field_3d(buf.get(), zfp_type_float, size_pad[2], size_pad[1], il_group_size);
 
