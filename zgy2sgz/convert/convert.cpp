@@ -46,9 +46,9 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
     // Very large files may have inlines which are too long for Schlumberger's implementation of ZgyReader
     // to read a full 64x64x64 brick-depth of. The limit appears to be 4GB, so suspect they use int where they
     // should be using size_t. Reduce il_group_size correspondingly and hope that the disk buffers save you.
-    while (il_group_size*size_pad[1]*size_pad[2]*sizeof(float) > UINT_MAX) {
+    // Actually the size limit might be 2GB from zfp...
+    while (il_group_size*size_pad[1]*size_pad[2]*sizeof(float) >= INT_MAX) {
         il_group_size /= 2;
-
     }
 
     std::ofstream outfile_handle (outfilename.c_str(), std::ofstream::binary);
