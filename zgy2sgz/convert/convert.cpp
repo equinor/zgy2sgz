@@ -18,6 +18,7 @@
 #include <fstream>
 #include <cstring>
 #include <stdio.h>
+#include <math.h>
 #include <limits.h>
 #include "zfp.h"
 
@@ -105,8 +106,15 @@ void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3]
     ((unsigned*)header)[13] = pad_dim;
     ((unsigned*)header)[14] = ((((size_pad[0]*size_pad[1]) / 8) * size_pad[2]) / 4096) * bits_per_voxel;
     ((unsigned*)header)[15] = meta.size[0] * meta.size[1] * sizeof(int);
-    ((unsigned*)header)[16] = 2;
+    ((unsigned*)header)[16] = 4;
 
+    // CDP_X CDP_Y
+    ((unsigned*)header)[458] = 181;
+    ((unsigned*)header)[460] = 181;
+    ((unsigned*)header)[461] = 185;
+    ((unsigned*)header)[463] = 185;
+
+    // INLINE_3D CROSSLINE_3D
     ((unsigned*)header)[464] = 189;
     ((unsigned*)header)[466] = 189;
     ((unsigned*)header)[467] = 193;
@@ -120,19 +128,33 @@ void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3]
 void writeFooter(std::ofstream& outfile_handle, MyMetaData meta)
 {
     int trace_count = meta.size[0]*meta.size[1];
+    int* cdpx_headers = new int[trace_count];
+    int* cdpy_headers = new int[trace_count];
     int* il_headers = new int[trace_count];
     int* xl_headers = new int[trace_count];
 
+    double easting_increment_il = (meta.hcornerxy[1][0] - meta.hcornerxy[0][0]) / (meta.size[0] - 1);
+    double northing_increment_il = (meta.hcornerxy[1][1] - meta.hcornerxy[0][1]) / (meta.size[0] - 1);
+
+    double easting_increment_xl = (meta.hcornerxy[2][0] - meta.hcornerxy[0][0]) / (meta.size[1] - 1);
+    double northing_increment_xl = (meta.hcornerxy[2][1] - meta.hcornerxy[0][1]) / (meta.size[1] - 1);
+
     for (int il=0; il<meta.size[0]; il++){
         for (int xl=0; xl<meta.size[1]; xl++){
+            cdpx_headers[il*meta.size[1] + xl] = (int) round(100.0 * (meta.hcornerxy[0][0] + il*easting_increment_il + xl*easting_increment_xl));
+            cdpy_headers[il*meta.size[1] + xl] = (int) round(100.0 * (meta.hcornerxy[0][1] + il*northing_increment_il + xl*northing_increment_xl));
             il_headers[il*meta.size[1] + xl] = (int) (meta.hannot0[0] + il*meta.dhannot[0]);
             xl_headers[il*meta.size[1] + xl] = (int) (meta.hannot0[1] + xl*meta.dhannot[1]);
         }
     }
+    outfile_handle.write((char*)cdpx_headers, trace_count*sizeof(int));
+    outfile_handle.write((char*)cdpy_headers, trace_count*sizeof(int));
     outfile_handle.write((char*)il_headers, trace_count*sizeof(int));
     outfile_handle.write((char*)xl_headers, trace_count*sizeof(int));
     outfile_handle.flush();
 
+    delete[] cdpx_headers;
+    delete[] cdpy_headers;
     delete[] il_headers;
     delete[] xl_headers;
 }
