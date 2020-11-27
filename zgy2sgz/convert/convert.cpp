@@ -108,6 +108,10 @@ void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3]
     ((unsigned*)header)[15] = meta.size[0] * meta.size[1] * sizeof(int);
     ((unsigned*)header)[16] = 4;
 
+    // Conversion is with coordinate scale factor of 100
+    ((unsigned*)header)[305] = 71;
+    ((unsigned*)header)[306] = 100;
+
     // CDP_X CDP_Y
     ((unsigned*)header)[458] = 181;
     ((unsigned*)header)[460] = 181;
