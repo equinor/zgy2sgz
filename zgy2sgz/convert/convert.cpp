@@ -90,23 +90,26 @@ MODULE_API void convertFile(const char *infile, const char *outfile, int bits_pe
 void writeHeader(std::ofstream& outfile_handle, MyMetaData meta, int size_pad[3], int pad_dim, int bits_per_voxel)
 {
     void* header = calloc(4096, 1);
-    ((unsigned*)header)[0] = 1;
-    ((unsigned*)header)[1] = meta.size[2];
-    ((unsigned*)header)[2] = meta.size[1];
-    ((unsigned*)header)[3] = meta.size[0];
-    ((unsigned*)header)[4] = (unsigned)meta.z0;
-    ((unsigned*)header)[5] = (unsigned)meta.hannot0[1];
-    ((unsigned*)header)[6] = (unsigned)meta.hannot0[0];
-    ((unsigned*)header)[7] = (unsigned)meta.dz;
-    ((unsigned*)header)[8] = (unsigned)meta.dhannot[1];
-    ((unsigned*)header)[9] = (unsigned)meta.dhannot[0];
-    ((int*)header)[10] = bits_per_voxel;
-    ((unsigned*)header)[11] = 4;
-    ((unsigned*)header)[12] = 4;
-    ((unsigned*)header)[13] = pad_dim;
-    ((unsigned*)header)[14] = ((((size_pad[0]*size_pad[1]) / 8) * size_pad[2]) / 4096) * bits_per_voxel;
-    ((unsigned*)header)[15] = meta.size[0] * meta.size[1] * sizeof(int);
-    ((unsigned*)header)[16] = 4;
+    ((unsigned*)header)[0] = 1; // Number of 4K blocks of header
+    ((unsigned*)header)[1] = meta.size[2]; // Samples per trace
+    ((unsigned*)header)[2] = meta.size[1]; // Number of crosslines
+    ((unsigned*)header)[3] = meta.size[0]; // Number of inlines
+    ((unsigned*)header)[4] = (unsigned)meta.z0; // Minimum sample time/depth
+    ((unsigned*)header)[5] = (unsigned)meta.hannot0[1]; // Minimum crossline number
+    ((unsigned*)header)[6] = (unsigned)meta.hannot0[0]; // Minimum inline number
+    ((unsigned*)header)[7] = (unsigned)meta.dz * 1000; // Sample interval (μs/m)
+    ((unsigned*)header)[8] = (unsigned)meta.dhannot[1]; // Crossline interval
+    ((unsigned*)header)[9] = (unsigned)meta.dhannot[0]; // Inline interval
+    ((int*)header)[10] = bits_per_voxel; // Bits-per-voxel (positive values only supported for ZGY)
+    ((unsigned*)header)[11] = 4; // Blockshape: IL-direction (only 4 supported for ZGY conversion)
+    ((unsigned*)header)[12] = 4; // Blockshape: XL-direction (only 4 supported for ZGY conversion)
+    ((unsigned*)header)[13] = pad_dim; // Blockshape: Trace-direction
+    ((unsigned*)header)[14] = ((size_t)size_pad[0] * (size_t)size_pad[1] * (size_t)size_pad[2] * (size_t)bits_per_voxel) / (8 * 4096); // Number of 4K disk blocks for data
+    ((unsigned*)header)[15] = meta.size[0] * meta.size[1] * sizeof(int); // Number of bytes for each header array
+    ((unsigned*)header)[16] = 4; // Number of header arrays (currently CDP_X, CDP_Y, INLINE_3D, CROSSLINE_3D for ZGY)
+    ((unsigned*)header)[17] = meta.size[0] * meta.size[1]; // Number of traces
+    ((unsigned*)header)[18] = 2062; // Encoded version number: 0.1.7
+    ((unsigned*)header)[19] = 10; // Encoded source format 10=ZGY
 
     // Conversion is with coordinate scale factor of 100
     ((unsigned*)header)[305] = 71;
