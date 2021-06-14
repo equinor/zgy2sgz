@@ -1,5 +1,5 @@
-os: Visual Studio 2015
-image: Visual Studio 2015
+os: Visual Studio 2019
+image: Visual Studio 2019
 
 platform:
   - x64
@@ -15,9 +15,6 @@ environment:
         secure: yNYS7xZ1Cx+oINGqVDiiZhVtDGJR7eK1irisAGXUjEzw0zzcRQ7X+5Z2QMNjOe7viPmMAkhyd82FeeiYbvQkDSgW0AJY3RF9CKwUJAwsX7OEgcl6Z4gmwGNp93HwucdX3vDHD+qawXmWdzPjfZbAZxr5E0OTQuVD1v+CpET7JluUh2pFEf8wZvA623JnnK9SXyQvz986nM8mT7JV/yFDaeCsPQTAqUFYD4mCYROTybA=
 
   matrix:
-    - PYTHON: C:\Python35
-      PYTHON_VERSION: 35
-
     - PYTHON: C:\Python36
       PYTHON_VERSION: 36
 
@@ -26,6 +23,9 @@ environment:
 
     - PYTHON: C:\Python38
       PYTHON_VERSION: 38
+
+    - PYTHON: C:\Python39
+      PYTHON_VERSION: 39
 
 install:
     - IF "%platform%" == "x64" SET PYTHON=%PYTHON%-x64
@@ -39,17 +39,16 @@ install:
     - python -m pip install --upgrade pip
     - python -m pip install twine wheel cython numpy scikit-build
     - python -m pip install --upgrade setuptools
-    - IF %PYTHON_VERSION% == "35" python -m pip install "cmake<3.14"
     - IF %PYTHON_VERSION% == "36" python -m pip install "cmake<3.14"
     - IF %PYTHON_VERSION% == "37" python -m pip install "cmake<3.14"
     - IF %PYTHON_VERSION% == "38" python -m pip install cmake
+    - IF %PYTHON_VERSION% == "39" python -m pip install cmake
 
     - echo %PATH%
     - echo %PYTHON%
 
 before_build:
-    - set generator="Visual Studio 14 2015"
-    - IF "%platform%" == "x64" set generator="Visual Studio 14 2015 Win64"
+    - set generator="Visual Studio 16 2019"
 
 build_script:
 
@@ -66,7 +65,7 @@ build_script:
     - cmake .. -G %generator%
     - cmake --build . --config Release
     - cd ../..
-    
+
     - cp zgy2sgz/build/convert/Release/zgy2sgz.dll .
     - cp zfp/build/bin/Release/zfp.dll .
     - cp zgy2sgz/open-zgy/zgy/Slb.Salmon.ZgyPublic/x64_vs140/Salmon/Main/Release/Slb.Salmon.Zgy.dll .
@@ -74,4 +73,9 @@ build_script:
     - python setup.py bdist_wheel
 
 deploy_script:
-  - python -m twine upload --skip-existing dist/*
+    - ps: |
+          Write-Host "TAG: $env:APPVEYOR_REPO_TAG"
+          If ($env:APPVEYOR_REPO_TAG -eq "false") { return }
+          Write-Host "Uploading wheels to pypi"
+          Invoke-Expression "python -m twine upload --skip-existing dist/*"
+          If ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }

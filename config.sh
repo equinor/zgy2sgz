@@ -5,7 +5,9 @@ function pre_build {
     # Runs in the root directory of this repository.
 
     $PYTHON_EXE -m pip install numpy cython scikit-build
-    $PYTHON_EXE -m pip install "cmake<3.14"
+    $PYTHON_EXE -m pip install \
+    "cmake < 3.14; python_version < '3.8'" \
+    "cmake; python_version >= '3.8'"
 
     yum_install uuid
 

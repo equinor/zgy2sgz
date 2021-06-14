@@ -8,8 +8,6 @@ def get_long_description():
     with open('README.md') as f:
         return f.read()
 
-version="0.1.2"
-
 if platform == "win32":
     # This is for Windows
     ext_modules = [Extension("zgy2sgz",
@@ -21,7 +19,7 @@ if platform == "win32":
                              language='c++',)]
 
     setup(name='zgy2sgz',
-          version=version,
+          use_scm_version=True,
           author="Equinor",
           url='https://github.com/equinor/zgy2sgz',
           description="Convert zgy files to sgz files",
@@ -42,7 +40,7 @@ else:
                              language='c++', )]
 
     setup(name='zgy2sgz',
-          version=version,
+          use_scm_version=True,
           author="Equinor",
           url='https://github.com/equinor/zgy2sgz',
           description="Convert zgy files to sgz files",
