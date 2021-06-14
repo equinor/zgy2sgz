@@ -19,6 +19,7 @@ if platform == "win32":
                              language='c++',)]
 
     setup(name='zgy2sgz',
+          setup_requires=['setuptools_scm'],
           use_scm_version=True,
           author="Equinor",
           url='https://github.com/equinor/zgy2sgz',
@@ -40,6 +41,7 @@ else:
                              language='c++', )]
 
     setup(name='zgy2sgz',
+          setup_requires=['setuptools_scm'],
           use_scm_version=True,
           author="Equinor",
           url='https://github.com/equinor/zgy2sgz',
