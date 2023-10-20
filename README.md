@@ -17,3 +17,7 @@ from zgy2sgz import convertFile
 # The 3rd argument is bits_per_voxel {16, 8, 4, 2, 1}
 convertFile(b'seismic_file.zgy', b'seismic_file.sgz', 4)
 ```
+
+---
+### Archiving
+2023-10-20: Repository archived in Github cleanup as this package is no longer maintained, since [pyzgy](https://github.com/equinor/pyzgy) now provides the required functionality to [semsic-zfp](https://github.com/equinor/seismic-zfp) in a more maintainable way.
